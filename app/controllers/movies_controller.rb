@@ -10,16 +10,39 @@ class MoviesController < ApplicationController
     #All possible ratings from movie model
     @all_ratings = Movie.all_ratings
 
-    #Determine whcih ratings to show based on params
-    if params[:ratings]
-      @ratings_to_show = params[:ratings].keys
+    # #Determine whcih ratings to show based on params
+    # if params[:ratings]
+    #   @ratings_to_show = params[:ratings].keys
+    # else
+    #   #If no ratings in params, show all
+    #   @ratings_to_show = @all_ratings
+    # end
+
+    # #sort parameter
+    # @sort_by = params[:sort_by]
+    
+    #check if user has submitted form
+    if params[:commit] || params[:sort_by]
+      #setting preferences
+      @sort_by = params[:sort_by]
+      #use settings if inputted
+      @ratings_to_show = params[:ratings] ? params[:ratings].keys : all_ratings
+
+      #save new settings to remember them
+      session[:sort_by] = @sort_by
+      session[:ratings] = @ratings_to_show
+
+    #returning to page to use saved settings
+    elsif session[:ratings] || session[:sort_by]
+      @sort_by = session[:sort_by]
+      @ratings_to_show = session[:ratings]
+    
+    #user's frist visit
     else
-      #If no ratings in params, show all
+      @sort_by = nil
       @ratings_to_show = @all_ratings
     end
 
-    #sort parameter
-    @sort_by = params[:sort_by] 
     #Fetch movies using model's filtering method and ordered
     @movies = Movie.with_ratings(@ratings_to_show).order(@sort_by)
   end

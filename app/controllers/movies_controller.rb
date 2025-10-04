@@ -18,8 +18,10 @@ class MoviesController < ApplicationController
       @ratings_to_show = @all_ratings
     end
 
-    #Fetch movies using model's filtering method
-    @movies = Movie.with_ratings(@ratings_to_show)
+    #sort parameter
+    @sort_by = params[:sort_by] 
+    #Fetch movies using model's filtering method and ordered
+    @movies = Movie.with_ratings(@ratings_to_show).order(@sort_by)
   end
 
   def new
